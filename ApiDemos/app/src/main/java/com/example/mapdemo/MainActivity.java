@@ -38,6 +38,7 @@ import android.widget.ListView;
 public final class MainActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener {
 
+    public static final Firebase myFirebaseRef = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com/");
 
     /**
      * A custom array adapter that shows a {@link FeatureView} containing details about the demo.
