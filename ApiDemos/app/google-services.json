@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "862356606508",
+    "firebase_url": "https://poopoopoint.firebaseio.com",
+    "project_id": "poopoopoint",
+    "storage_bucket": "poopoopoint.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862356606508:android:b539d1c2d7a2926a",
+        "android_client_info": {
+          "package_name": "com.p3.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862356606508-e8pggat0g914l6hnmvnvc2s36f0ce742.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCf8_T_KeErcukhNnw439JlrhcQMHgJeI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
