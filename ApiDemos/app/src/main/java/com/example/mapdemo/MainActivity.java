@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * The main activity of the API library demo gallery.
  * <p>
@@ -38,7 +45,7 @@ import android.widget.ListView;
 public final class MainActivity extends AppCompatActivity
         implements AdapterView.OnItemClickListener {
 
-    public static final Firebase myFirebaseRef = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com/");
+    private Firebase firebase;
 
     /**
      * A custom array adapter that shows a {@link FeatureView} containing details about the demo.
@@ -79,6 +86,7 @@ public final class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        Firebase.setAndroidContext(this);
         ListView list = (ListView) findViewById(R.id.list);
 
         ListAdapter adapter = new CustomArrayAdapter(this, DemoDetailsList.DEMOS);
@@ -86,6 +94,32 @@ public final class MainActivity extends AppCompatActivity
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
         list.setEmptyView(findViewById(R.id.empty));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        firebase = new Firebase("https://poopoopoint.firebaseio.com");
+
+        firebase.child("codyTest0").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Log.println(Log.INFO, "MainActivity", snapshot.getValue().toString());
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.println(Log.ERROR, "MainActivity", "The read failed: " + firebaseError.getMessage());
+            }
+        });
+
+        Firebase washroomsRef = firebase.child("Washrooms");
+        washroomsRef.push().setValue(new Washroom(new LatLng(0, 0), "zero-zero"));
+        washroomsRef.push().setValue(new Washroom(new LatLng(4234.234, -203.23), "somewhere").thumbsUp().thumbsUp().thumbsDown());
+        washroomsRef.push().setValue(new Washroom(new LatLng(5, -5), "jaja").thumbsDown());
+
+        Firebase fountainsRef = firebase.child("Fountains");
+
     }
 
     @Override
@@ -109,5 +143,54 @@ public final class MainActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         DemoDetails demo = (DemoDetails) parent.getAdapter().getItem(position);
         startActivity(new Intent(this, demo.activityClass));
+    }
+
+    public class Washroom {
+        private LatLng latLng;
+        private String name;
+        private int thumbsUp;
+        private int thumbsDown;
+
+        public Washroom(LatLng latLng, String name) {
+            this.latLng = latLng;
+            this.name = name;
+            this.thumbsUp = 0;
+            this.thumbsDown = 0;
+        }
+
+        public Washroom thumbsUp() {
+            this.thumbsUp++;
+            return this;
+        }
+
+        public Washroom thumbsDown() {
+            this.thumbsDown++;
+            return this;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public double getLatitude() {
+            return latLng.latitude;
+        }
+
+        public double getLongitude() {
+            return latLng.longitude;
+        }
+
+        public double getRating() {
+            int total = thumbsUp + thumbsDown;
+            if (total != 0) {
+                return (double)thumbsUp/total;
+            } else {
+                return -1;
+            }
+        }
+
+        public String toString() {
+            return name + " " + latLng.toString();
+        }
     }
 }
